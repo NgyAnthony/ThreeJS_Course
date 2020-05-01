@@ -44,14 +44,13 @@ const sketch = ({ context }) => {
   const earthTexture = loader.load("earth.jpg")
   const moonTexture = loader.load("moon.jpg")
 
-  // Setup a material
-  const material = new THREE.MeshStandardMaterial({
+  // Setup an earth material
+  const earthMaterial = new THREE.MeshStandardMaterial({
     map: earthTexture,
     roughness: 1,
     metalness: 0,
   });
 
-  const moonGroup = new THREE.Group();
   //Setup a moon material
   const moonMaterial = new THREE.MeshStandardMaterial({
     map: moonTexture,
@@ -59,22 +58,30 @@ const sketch = ({ context }) => {
     metalness: 0
   });
 
-  // Setup a mesh with geometry + material
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  // Create earth mesh
+  const earthMesh = new THREE.Mesh(geometry, earthMaterial);
+  scene.add(earthMesh);
 
+  // Create moon group
+  const moonGroup = new THREE.Group();
+
+  // Create moon mesh
   const moonMesh = new THREE.Mesh(geometry, moonMaterial);
   moonMesh.position.set(1.5, 1, 0)
   moonMesh.scale.setScalar(0.25)
   moonGroup.add(moonMesh);
-
   scene.add(moonGroup)
 
+  // Lights
   const light = new THREE.PointLight("white", 1)
   light.position.set(2,2,2)
   scene.add(light)
 
+  // Helpers
+  scene.add(new THREE.AxesHelper(3))
+  scene.add(new THREE.GridHelper(5, 15))
   scene.add(new THREE.PointLightHelper(light))
+
   // draw each frame
   return {
     // Handle resize events here
@@ -86,7 +93,7 @@ const sketch = ({ context }) => {
     },
     // Update & render your scene here
     render({ time }) {
-      mesh.rotation.y = time * 0.25;
+      earthMesh.rotation.y = time * 0.25;
       moonMesh.rotation.y = time * 0.15;
       moonGroup.rotation.y = time * 0.5;
       controls.update();
